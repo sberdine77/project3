@@ -71,7 +71,7 @@ int MyItem::compare(const Item<int> *item) const{
 
 void MyItem::changeKey(int key){this->key = key;}
 
-int MyItem::recoverKey(){return this->key;}
+int MyItem::recoverKey() const {return this->key;}
 
 /***************************************************************************************************/
 
@@ -129,7 +129,7 @@ void Sort<KeyType>::order(Item<KeyType> **v, int left, int right){
 }
 
 template<class KeyType>
-void Sort quickSort(Item<KeyType> **v, int n){
+void Sort<KeyType>::quickSort(Item<KeyType> **v, int n){
 	order(v, 1, n);
 }
 
