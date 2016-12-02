@@ -57,6 +57,8 @@ public:
 	virtual int compare(const Item<int> *item) const;
 	virtual void changeKey(int key);
 	virtual int recoverKey() const;
+	static MyItem *getMax(Item<int> **v, int n);
+	int division(int n);
 	~MyItem(){}
 };
 
@@ -73,6 +75,22 @@ void MyItem::changeKey(int key){this->key = key;}
 
 int MyItem::recoverKey() const {return this->key;}
 
+MyItem *MyItem::getMax(Item<int> **v, int n){
+	MyItem *max = (MyItem *)v[0];
+	for (int i = 1; i < n; i++){
+		MyItem *x = (MyItem *)v[i];
+		if(x->compare(max) > 0){
+			max = x;
+		}
+	}
+	return max;
+}
+
+int MyItem::division(int n){
+	int x = this->key;
+	return (x / n);
+}
+
 /***************************************************************************************************/
 
 /*Sort*/
@@ -85,6 +103,7 @@ private:
 	typedef struct PartitionEdges{int i, j;} PartitionEdges;
 	static PartitionEdges partition(Item<KeyType> **v, int left, int right);
 	static void order (Item<KeyType> **v, int left, int right);
+	static void countSort(Item<KeyType> **v, int n, int exp);
 };
 
 template<class KeyType>
@@ -131,6 +150,35 @@ void Sort<KeyType>::order(Item<KeyType> **v, int left, int right){
 template<class KeyType>
 void Sort<KeyType>::quickSort(Item<KeyType> **v, int n){
 	order(v, 1, n);
+}
+
+template<class KeyType>
+void Sort<KeyType>::countSort(Item<KeyType> **v, int n, int exp){
+	Item<KeyType> **output;
+	int counts[10] = {0};
+	for (int i = 0; i < n; i++){
+		Item<KeyType> *x = v[i];
+		counts[(x->division(exp)) % 10]++;
+	}
+	for (int i = 1; i < 10; i++){
+		counts[i] += counts[i-1];
+	}
+	for (int i = n-1; i >= 0; i--){
+		Item<KeyType> *x = v[i];
+		output[counts[(x->division(exp)) % 10] -1] = v[i];
+		counts[(x->division(exp)) % 10]--;
+	}
+	for (int i = 0; i < n; i++){
+		v[i] = output[i];
+	}
+}
+
+template<class KeyType>
+void Sort<KeyType>::radixSort(Item<KeyType> **v, int n){
+	Item<KeyType> *m = getMax(v, n);
+	for (int exp = 1; m->division(exp) > 0; exp *= 10){
+		countSort(v, n, exp);
+	}
 }
 
 /********************************************************************************************************/
